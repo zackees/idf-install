@@ -25,9 +25,8 @@ if [ -d $IDF_PATH ]; then
            exit 1
            ;;
     esac
-    rm -rf ~/esp
+    rm -rf $IDF_PATH
 fi
-rm -rf $IDF_PATH
 mkdir -p $(dirname $IDF_PATH)
 git clone -b $IDF_VER --recursive --depth 1 https://github.com/espressif/esp-idf.git $IDF_PATH 
 cd $IDF_PATH
