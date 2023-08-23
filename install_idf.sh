@@ -2,7 +2,7 @@
 
 export IDF_VER=v5.0
 export IDF_PATH=./esp-idf/$IDF_VER
-export IDF_TARGETS=esp32,esp32s3
+export IDF_TARGETS=esp32,esp32s3,esp32c3
 
 set -e
 # cwd is the current directory of
