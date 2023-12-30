@@ -1,5 +1,6 @@
-# template-python-cmd
-A template for quickly making a python lib that has a command line program attached
+# idf-install
+
+The missing installer for idf-installer for esp32 development on platformio and other IDEs
 
 [![Linting](../../actions/workflows/lint.yml/badge.svg)](../../actions/workflows/lint.yml)
 
