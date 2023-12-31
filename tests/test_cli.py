@@ -4,7 +4,7 @@ Unit test file.
 import os
 import unittest
 
-COMMAND = "idf-install"
+COMMAND = "idf-install --non-interactive"
 
 
 class MainTester(unittest.TestCase):
