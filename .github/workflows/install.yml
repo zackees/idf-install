@@ -22,6 +22,8 @@ jobs:
         key: ${{ runner.os }}-pip-${{ hashFiles('**/setup.py') }}
         restore-keys: |
           ${{ runner.os }}-pip-
-    - name: install
-      run: python install_idf.py
+    - name: pip install
+      run: pip install .
+    - name: Run Installer
+      run: idf-install --non-interactive
 
