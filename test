@@ -3,4 +3,5 @@
 set -e
 . ./activate.sh
 echo "Running unittests"
-python -m unittest discover -s tests -p "*test*.py"
+python tests/test_cli.py
+python tests/test_install.py
