@@ -24,13 +24,7 @@ def main() -> int:
         action="store_true",
     )
     args = parser.parse_args()
-
-    def ask_user(msg: str) -> bool:
-        if args.non_interactive:
-            return True
-        choice = input(msg).lower()
-        return choice in ["y", "yes"]
-
+    # do something with args later.
     # Get the python path
     python_path = shutil.which("python")
     assert python_path is not None, "Python not found in PATH"
@@ -43,37 +37,27 @@ def main() -> int:
         )
         sys.exit(1)
 
-    # Check if IDF_PATH directory exists
-    if os.path.isdir(IDF_PATH):
-        print(
-            f"Warning: This script will remove the {IDF_PATH} directory and all its contents."
-        )
-        do_continue = ask_user("Continue? [y/n]: ")
-        if do_continue:
-            print(f"Removing {IDF_PATH} directory")
-        else:
-            print("Aborting")
-            sys.exit(1)
-        shutil.rmtree(IDF_PATH)
-
     # Create the directory
     os.makedirs(os.path.dirname(IDF_PATH), exist_ok=True)
 
-    # Clone the repository
-    subprocess.run(
-        [
-            "git",
-            "clone",
-            "-b",
-            IDF_VER,
-            "--recursive",
-            "--depth",
-            "1",
-            "https://github.com/espressif/esp-idf.git",
-            IDF_PATH,
-        ],
-        check=True,
-    )
+    if os.path.exists(IDF_PATH):
+        subprocess.run("git pull", cwd="esp-idf", shell=True, check=True)
+    else:
+        # Clone the repository
+        subprocess.run(
+            [
+                "git",
+                "clone",
+                "-b",
+                IDF_VER,
+                "--recursive",
+                "--depth",
+                "1",
+                "https://github.com/espressif/esp-idf.git",
+                IDF_PATH,
+            ],
+            check=True,
+        )
 
     os.chdir(IDF_PATH)
 
