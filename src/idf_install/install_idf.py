@@ -1,10 +1,10 @@
 # WORK IN PROGRESS
 
+import argparse
 import os
 import shutil
 import subprocess
 import sys
-import argparse
 
 # Set environment variables
 IDF_VER = "v5.0"
@@ -12,9 +12,8 @@ IDF_PATH = f"./esp-idf/{IDF_VER}"
 IDF_TARGETS = "esp32,esp32s3,esp32c3"
 
 
-
 def main() -> int:
-    parser = argparse.ArgumentParser(    
+    parser = argparse.ArgumentParser(
         description="Install ESP-IDF toolchain",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
@@ -25,15 +24,13 @@ def main() -> int:
         action="store_true",
     )
     args = parser.parse_args()
+
     def ask_user(msg: str) -> bool:
         if args.non_interactive:
             return True
-        else:
-            choice = input(msg).lower()
-            if choice == "y":
-                return True
-            else:
-                return False
+        choice = input(msg).lower()
+        return choice in ["y", "yes"]
+
     # Get the python path
     python_path = shutil.which("python")
     assert python_path is not None, "Python not found in PATH"
@@ -41,7 +38,8 @@ def main() -> int:
     # Check if .espressif is in the python path
     if ".espressif" in python_path:
         print(
-            "Error: You are using the espressif python environment. Please deactivate it and try again."
+            "Error: You are using the espressif python environment."
+            "Please deactivate it and try again."
         )
         sys.exit(1)
 
@@ -85,9 +83,12 @@ def main() -> int:
 
     # Install WT32-SC01 (esp32) and WT32-SC01-Plus (esp32s3) toolchain
     if os.name == "nt":
-        subprocess.run(f"cmd.exe /c install.bat {IDF_TARGETS}", shell=True, check=True)
+        rtn = subprocess.run(
+            f"cmd.exe /c install.bat {IDF_TARGETS}", shell=True, check=True
+        )
     else:
-        subprocess.run(["./install.sh", IDF_TARGETS], check=True)
+        rtn = subprocess.run(["./install.sh", IDF_TARGETS], check=True)
+    return rtn.returncode
 
 
 if __name__ == "__main__":
