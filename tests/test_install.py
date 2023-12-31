@@ -2,10 +2,11 @@
 Unit test file.
 """
 
-import unittest
 import sys
+import unittest
 
 from idf_install.install_idf import main
+
 
 class MainTester(unittest.TestCase):
     """Main tester class."""

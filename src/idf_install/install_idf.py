@@ -23,8 +23,8 @@ def main() -> int:
         help="Do not ask for confirmation before removing the directory",
         action="store_true",
     )
-    args = parser.parse_args()
     # do something with args later.
+    _ = parser.parse_args()
     # Get the python path
     python_path = shutil.which("python")
     assert python_path is not None, "Python not found in PATH"
