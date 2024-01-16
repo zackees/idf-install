@@ -6,6 +6,9 @@ import shutil
 import subprocess
 import sys
 
+HERE = os.path.dirname(os.path.abspath(__file__))
+os.chdir(HERE)
+
 # Set environment variables
 IDF_VER = "v5.0"
 IDF_PATH = f"./esp-idf/{IDF_VER}"
@@ -61,15 +64,11 @@ def main() -> int:
 
     os.chdir(IDF_PATH)
 
-    print(
-        f"About to run install script in the current directory: {os.path.abspath(os.getcwd())}"
-    )
+    print(f"About to run install script in the current directory: {os.path.abspath(os.getcwd())}")
 
     # Install WT32-SC01 (esp32) and WT32-SC01-Plus (esp32s3) toolchain
     if os.name == "nt":
-        rtn = subprocess.run(
-            f"cmd.exe /c install.bat {IDF_TARGETS}", shell=True, check=True
-        )
+        rtn = subprocess.run(f"cmd.exe /c install.bat {IDF_TARGETS}", shell=True, check=True)
     else:
         rtn = subprocess.run(["./install.sh", IDF_TARGETS], check=True)
     return rtn.returncode
