@@ -1,0 +1,3 @@
+#!/bin/bash
+. ./activate.sh
+python -m src.idf_install.install_idf.py
