@@ -8,8 +8,11 @@ The missing installer for idf-installer for esp32 development on platformio and 
 [![Ubuntu_Tests](../../actions/workflows/push_ubuntu.yml/badge.svg)](../../actions/workflows/push_ubuntu.yml)
 [![Win_Tests](../../actions/workflows/push_win.yml/badge.svg)](../../actions/workflows/push_win.yml)
 
-Replace `template-python-cmd` and `template_python_cmd` with your command. Run tox until it's
-correct.
+# Running
+
+```
+./run
+```
 
 To develop software, run `. ./activate.sh`
 
