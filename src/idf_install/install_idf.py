@@ -48,11 +48,28 @@ def git_ensure_installed(commit: str) -> None:
 
     # Full install: clone the repository
     print(f"Cloning the repository into directory {os.path.abspath(IDF_INSTALL_PATH)}")
+    print("grab a coffee... this wil take a while.")
     git_clone_cmd = ["git", "clone", "--recursive", GIT_REPO, IDF_INSTALL_PATH]
     subprocess.run(git_clone_cmd, check=True)
     # Checkout the specific commit
     git_checkout_cmd = ["git", "checkout", commit]
     subprocess.run(git_checkout_cmd, check=True, cwd=IDF_INSTALL_PATH)
+
+
+def check_git_ignore() -> None:
+    # Check if the .gitignore file is present
+    gitignore_path = os.path.join(IDF_INSTALL_PATH, ".gitignore")
+    if not os.path.exists(gitignore_path):
+        print(
+            f"Warning: {gitignore_path} not found. " "This may cause issues with the installation."
+        )
+        return
+    with open(gitignore_path, "r") as f:
+        gitignore = f.read()
+    if "esp-idf" not in gitignore:
+        print(f"adding esp-idf to {gitignore_path}")
+        with open(gitignore_path, "a") as f:
+            f.write("\nesp-idf\n")
 
 
 def main() -> int:
