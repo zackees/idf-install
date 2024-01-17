@@ -47,17 +47,19 @@ def git_ensure_installed(commit: str) -> None:
         subprocess.run(["git", "clean", "-fdx"], cwd=IDF_INSTALL_PATH, check=True)
         subprocess.run(["git", "reset", "--hard"], cwd=IDF_INSTALL_PATH, check=True)
         subprocess.run(["git", "pull"], cwd=IDF_INSTALL_PATH, check=True)
-    else:
-        # Clone the repository
-        with tempfile.TemporaryDirectory() as tmpdir:
-            print("Cloning the repository into a temporary directory: ", tmpdir)
-            subprocess.run(
-                ["git", "clone", "--recursive", GIT_REPO, IDF_INSTALL_PATH],
-                check=True,
-                cwd=tmpdir,
-            )
-            # now copy the files to the current directory
-            shutil.move(tmpdir, IDF_INSTALL_PATH)
+        subprocess.run(["git", "checkout", commit], check=True, cwd=IDF_INSTALL_PATH)
+        return
+
+    # Full install: clone the repository
+    with tempfile.TemporaryDirectory() as tmpdir:
+        print("Cloning the repository into a temporary directory: ", tmpdir)
+        subprocess.run(
+            ["git", "clone", "--recursive", GIT_REPO, IDF_INSTALL_PATH],
+            check=True,
+            cwd=tmpdir,
+        )
+        # now copy the files to the IDF_INSTALL_PATH
+        shutil.move(tmpdir, IDF_INSTALL_PATH)
     # Checkout the specific commit
     subprocess.run(["git", "checkout", commit], check=True, cwd=IDF_INSTALL_PATH)
 
@@ -87,7 +89,7 @@ def main() -> int:
             "Error: You are using the espressif python environment."
             "Please deactivate it and try again."
         )
-        sys.exit(1)
+        return 1
     commit = get_commit()
     git_ensure_installed(commit)
     print(
