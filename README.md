@@ -8,18 +8,34 @@ The missing installer for idf-installer for esp32 development on platformio and 
 [![Ubuntu_Tests](../../actions/workflows/push_ubuntu.yml/badge.svg)](../../actions/workflows/push_ubuntu.yml)
 [![Win_Tests](../../actions/workflows/push_win.yml/badge.svg)](../../actions/workflows/push_win.yml)
 
-# Running
+# Install idf-install toolset
 
+Install the installer tool
 ```
-./run
+pip install .
 ```
+
+Then run the installer
+```
+idf-install
+```
+
+After that, run the export command to enter into the environment
+
+
+Windows:
+```
+esp-idf\v5.2\export.bat
+```
+
+# Develop
 
 To develop software, run `. ./activate.sh`
 
-# Windows
+## Windows
 
 This environment requires you to use `git-bash`.
 
-# Linting
+## Linting
 
 Run `./lint.sh` to find linting errors using `pylint`, `flake8` and `mypy`.
