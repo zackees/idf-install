@@ -5,6 +5,8 @@ import subprocess
 import sys
 from warnings import warn
 
+from send2trash import send2trash
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 DEFAULT_INSTALL_DIR = os.path.join(os.getcwd(), "esp-idf")
 
@@ -44,7 +46,12 @@ def run_platform_install(idf_install_path: str, idf_targets: str) -> subprocess.
             warn(f"export.bat not found in {idf_install_path}")
             return cp
         export_bat = files[0]
-        print(f"Now run {export_bat} whenever you want to use the idf.py toolchain.")
+        # make it relative
+        export_bat = os.path.relpath(export_bat, os.getcwd())
+        print(f"\nNow run {export_bat} whenever you want to use the idf.py toolchain.")
+        # Generate an export.bat file that simply calls into the export_bat file in the toolchain.
+        with open("export.bat", encoding="utf-8", mode="w") as f:
+            f.write(f'@call "{export_bat}"\n')
     else:
         cp = subprocess.run(["./install.sh", idf_targets], check=True, cwd=idf_install_path)
     return cp
@@ -58,7 +65,15 @@ def touch_file(filepath: str) -> None:
 def git_ensure_installed(idf_install_path: str, commit: str | None) -> None:
     # Use git to ensure repo is valid
     if os.path.exists(idf_install_path):
-        shutil.rmtree(idf_install_path)
+        shutil.rmtree(idf_install_path, ignore_errors=True)
+        try:
+            shutil.rmtree(idf_install_path)
+        except OSError:
+            warn(
+                f"Could not fully remove {idf_install_path} using shutil.rmtree,"
+                + " sending it to the trash instead."
+            )
+            send2trash(idf_install_path)
 
     # Full install: clone the repository
     print(f"Cloning the repository into directory {os.path.abspath(idf_install_path)}")
