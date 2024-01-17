@@ -1,6 +1,6 @@
 # idf-install
 
-The missing installer for idf-installer for esp32 development on platformio and other IDEs
+The missing installer for idf-installer for esp32 development. Run `idf-install` and an environment will be installed and files will be dropped to enter into the environment.
 
 [![Linting](../../actions/workflows/lint.yml/badge.svg)](../../actions/workflows/lint.yml)
 
