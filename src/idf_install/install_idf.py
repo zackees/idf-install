@@ -6,10 +6,10 @@ import sys
 import tempfile
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-os.chdir(HERE)
 
 # Set environment variables
 IDF_VER = "v5.2"  # Only used to version downloaded files.
+
 IDF_INSTALL_PATH = f"./esp-idf/{IDF_VER}"
 IDF_TARGETS = ["esp32", "esp32s3", "esp32c3"]
 
@@ -17,7 +17,7 @@ GIT_REPO = "https://github.com/espressif/esp-idf.git"
 
 COMMIT_MAP = {
     # Maps IDF_VER to the commit hash
-    "v5.2": "da6325dd7e8e152094b19fe63190907f38ef1ff0",
+    "v5.2": "b3f7e2c8a4d354df8ef8558ea7caddc07283a57b",
 }
 
 
@@ -44,24 +44,15 @@ def run_platform_install() -> subprocess.CompletedProcess:
 def git_ensure_installed(commit: str) -> None:
     # Use git to ensure repo is valid
     if os.path.exists(IDF_INSTALL_PATH):
-        subprocess.run(["git", "clean", "-fdx"], cwd=IDF_INSTALL_PATH, check=True)
-        subprocess.run(["git", "reset", "--hard"], cwd=IDF_INSTALL_PATH, check=True)
-        subprocess.run(["git", "pull"], cwd=IDF_INSTALL_PATH, check=True)
-        subprocess.run(["git", "checkout", commit], check=True, cwd=IDF_INSTALL_PATH)
-        return
+        shutil.rmtree(IDF_INSTALL_PATH)
 
     # Full install: clone the repository
-    with tempfile.TemporaryDirectory() as tmpdir:
-        print("Cloning the repository into a temporary directory: ", tmpdir)
-        subprocess.run(
-            ["git", "clone", "--recursive", GIT_REPO, IDF_INSTALL_PATH],
-            check=True,
-            cwd=tmpdir,
-        )
-        # now copy the files to the IDF_INSTALL_PATH
-        shutil.move(tmpdir, IDF_INSTALL_PATH)
+    print(f"Cloning the repository into directory {os.path.abspath(IDF_INSTALL_PATH)}")
+    git_clone_cmd = ["git", "clone", "--recursive", GIT_REPO, IDF_INSTALL_PATH]
+    subprocess.run(git_clone_cmd, check=True)
     # Checkout the specific commit
-    subprocess.run(["git", "checkout", commit], check=True, cwd=IDF_INSTALL_PATH)
+    git_checkout_cmd = ["git", "checkout", commit]
+    subprocess.run(git_checkout_cmd, check=True, cwd=IDF_INSTALL_PATH)
 
 
 def main() -> int:
