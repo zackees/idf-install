@@ -3,8 +3,10 @@ import os
 import shutil
 import subprocess
 import sys
+from warnings import warn
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+DEFAULT_INSTALL_DIR = os.path.join(os.getcwd(), "esp-idf")
 
 # Set environment variables
 IDF_VER = "v5.2"  # Only used to version downloaded files.
@@ -18,9 +20,16 @@ COMMIT_MAP = {
 }
 
 
-def run_platform_install(
-    idf_install_path: str, idf_targets: str
-) -> subprocess.CompletedProcess:
+def find_files(filename: str, search_path: str) -> list[str]:
+    result: list[str] = []
+    # Wlaking top-down from the root
+    for root, _, files in os.walk(search_path):
+        if filename in files:
+            result.append(os.path.join(root, filename))
+    return result
+
+
+def run_platform_install(idf_install_path: str, idf_targets: str) -> subprocess.CompletedProcess:
     # Run the install script for the platform
     # Install WT32-SC01 (esp32) and WT32-SC01-Plus (esp32s3) toolchain
     if os.name == "nt":
@@ -30,11 +39,20 @@ def run_platform_install(
             check=True,
             cwd=idf_install_path,
         )
+        files = find_files("export.bat", idf_install_path)
+        if len(files) == 0:
+            warn(f"export.bat not found in {idf_install_path}")
+            return cp
+        export_bat = files[0]
+        print(f"Now run {export_bat} whenever you want to use the idf.py toolchain.")
     else:
-        cp = subprocess.run(
-            ["./install.sh", idf_targets], check=True, cwd=idf_install_path
-        )
+        cp = subprocess.run(["./install.sh", idf_targets], check=True, cwd=idf_install_path)
     return cp
+
+
+def touch_file(filepath: str) -> None:
+    with open(filepath, mode="a"):  # pylint: disable=unspecified-encoding
+        pass
 
 
 def git_ensure_installed(idf_install_path: str, commit: str | None) -> None:
@@ -44,7 +62,7 @@ def git_ensure_installed(idf_install_path: str, commit: str | None) -> None:
 
     # Full install: clone the repository
     print(f"Cloning the repository into directory {os.path.abspath(idf_install_path)}")
-    print("grab a coffee... this wil take a while.")
+    print("grab a coffee... this will take a while.")
     git_clone_cmd = ["git", "clone", "--recursive", GIT_REPO, idf_install_path]
     subprocess.run(git_clone_cmd, check=True)
     # Checkout the specific commit
@@ -55,13 +73,11 @@ def git_ensure_installed(idf_install_path: str, commit: str | None) -> None:
 
 def check_git_ignore() -> None:
     # Check if the .gitignore file is present
-    gitignore_path = os.path.join(HERE, ".gitignore")
-    if not os.path.exists(gitignore_path):
-        print(
-            f"Warning: {gitignore_path} not found. "
-            "This may cause issues with the installation."
-        )
+    is_git_repo = os.path.exists(os.path.join(HERE, ".git"))
+    if not is_git_repo:
         return
+    gitignore_path = os.path.join(HERE, ".gitignore")
+    touch_file(gitignore_path)
     with open(gitignore_path, encoding="utf-8", mode="r") as f:
         gitignore = f.read()
     if "esp-idf" not in gitignore:
@@ -89,7 +105,7 @@ def check_environment() -> tuple[bool, str]:
     return True, python_path
 
 
-def main() -> int:
+def parse_arguments() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Install ESP-IDF toolchain",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
@@ -111,25 +127,36 @@ def main() -> int:
         help="Install the latest version of the IDF",
         action="store_true",
     )
-    # do something with args later.
+    parser.add_argument(
+        "--install-dir",
+        help=f"Directory to install the IDF to, default is {DEFAULT_INSTALL_DIR}",
+        type=str,
+        default=DEFAULT_INSTALL_DIR,
+    )
     args = parser.parse_args()
+    return args
+
+
+def main() -> int:
+    args = parse_arguments()
     if args.non_interactive:
-        raise NotImplementedError("Non-interactive mode is not supported yet.")
-    # Get the python path
+        warn("non-interactive mode is not implemented yet.")
     ok, err_msg = check_environment()
     if not ok:
         print(err_msg)
         return 1
     if args.latest:
         commit = None
-        idf_install_path = "./esp-idf/latest"
+        idf_install_path = os.path.join(args.install_dir, "latest")
     else:
         commit = COMMIT_MAP[IDF_VER]
-        idf_install_path = f"./esp-idf/{IDF_VER}"
+        idf_install_path = os.path.join(args.install_dir, IDF_VER)
+    print(f"install idf at: {idf_install_path}")
     git_ensure_installed(idf_install_path, commit)
     print(
         f"About to run install script in the current directory: {os.path.abspath(idf_install_path)}"
     )
+
     targets = args.esp32_targets
     completed_process = run_platform_install(idf_install_path, targets)
     if completed_process.returncode != 0:
