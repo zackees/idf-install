@@ -11,8 +11,11 @@ os.chdir(HERE)
 
 # Set environment variables
 IDF_VER = "v5.0"
-IDF_PATH = f"./esp-idf/{IDF_VER}"
+IDF_INSTALL_PATH = f"./esp-idf/{IDF_VER}"
 IDF_TARGETS = "esp32,esp32s3,esp32c3"
+
+# GIT_REPO = "https://github.com/espressif/esp-idf.git"
+GIT_REPO = "https://github.com/espressif/arduino-esp32/releases/tag/3.0.0-alpha3"
 
 
 def main() -> int:
@@ -41,9 +44,9 @@ def main() -> int:
         sys.exit(1)
 
     # Create the directory
-    os.makedirs(os.path.dirname(IDF_PATH), exist_ok=True)
+    os.makedirs(os.path.dirname(IDF_INSTALL_PATH), exist_ok=True)
 
-    if os.path.exists(IDF_PATH):
+    if os.path.exists(IDF_INSTALL_PATH):
         subprocess.run("git pull", cwd="esp-idf", shell=True, check=True)
     else:
         # Clone the repository
@@ -56,13 +59,13 @@ def main() -> int:
                 "--recursive",
                 "--depth",
                 "1",
-                "https://github.com/espressif/esp-idf.git",
-                IDF_PATH,
+                GIT_REPO,
+                IDF_INSTALL_PATH,
             ],
             check=True,
         )
 
-    os.chdir(IDF_PATH)
+    os.chdir(IDF_INSTALL_PATH)
 
     print(f"About to run install script in the current directory: {os.path.abspath(os.getcwd())}")
 

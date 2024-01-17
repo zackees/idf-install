@@ -1,7 +1,7 @@
 #!/bin/bash
 
 export IDF_VER=v5.0
-export IDF_PATH=./esp-idf/$IDF_VER
+export IDF_INSTALL_PATH=./esp-idf/$IDF_VER
 export IDF_TARGETS=esp32,esp32s3,esp32c3
 
 set -e
@@ -14,22 +14,22 @@ if [[ $python_path == *".espressif"* ]]; then
     echo "Error: You are using the espressif python environment. Please deactivate it and try again."
     exit 1
 fi
-if [ -d $IDF_PATH ]; then
+if [ -d $IDF_INSTALL_PATH ]; then
     # warn the user that we are about to rm-rf ~/esp directory
-    echo "Warning: This script will remove the $IDF_PATH directory and all its contents."
+    echo "Warning: This script will remove the $IDF_INSTALL_PATH directory and all its contents."
     read -p "Continue? [y/n]: " choice
     case $choice in
-        y|Y) echo "Removing $IDF_PATH directory"
+        y|Y) echo "Removing $IDF_INSTALL_PATH directory"
              ;;
         *) echo "Aborting"
            exit 1
            ;;
     esac
-    rm -rf $IDF_PATH
+    rm -rf $IDF_INSTALL_PATH
 fi
-mkdir -p $(dirname $IDF_PATH)
-git clone -b $IDF_VER --recursive --depth 1 https://github.com/espressif/esp-idf.git $IDF_PATH 
-cd $IDF_PATH
+mkdir -p $(dirname $IDF_INSTALL_PATH)
+git clone -b $IDF_VER --recursive --depth 1 https://github.com/espressif/esp-idf.git $IDF_INSTALL_PATH 
+cd $IDF_INSTALL_PATH
 # Install WT32-SC01 (esp32) and WT32-SC01-Plus (esp32s3) toolchain
 ./install.sh $IDF_TARGETS
 # Workaround a bug for the fmt library in managed components
