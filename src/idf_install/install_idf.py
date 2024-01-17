@@ -48,10 +48,10 @@ def run_platform_install(idf_install_path: str, idf_targets: str) -> subprocess.
         export_bat = files[0]
         # make it relative
         export_bat = os.path.relpath(export_bat, os.getcwd())
-        print(f"\nNow run {export_bat} whenever you want to use the idf.py toolchain.")
         # Generate an export.bat file that simply calls into the export_bat file in the toolchain.
-        with open("export.bat", encoding="utf-8", mode="w") as f:
+        with open("enter.bat", encoding="utf-8", mode="w") as f:
             f.write(f'@call "{export_bat}"\n')
+        print("\nNow run enter.bat whenever you want to use the idf.py toolchain.")
     else:
         cp = subprocess.run(["./install.sh", idf_targets], check=True, cwd=idf_install_path)
     return cp
@@ -180,4 +180,8 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    try:
+        sys.exit(main())
+    except KeyboardInterrupt:
+        print("Cancelled by user.")
+        sys.exit(1)
