@@ -18,7 +18,9 @@ COMMIT_MAP = {
 }
 
 
-def run_platform_install(idf_install_path: str, idf_targets: str) -> subprocess.CompletedProcess:
+def run_platform_install(
+    idf_install_path: str, idf_targets: str
+) -> subprocess.CompletedProcess:
     # Run the install script for the platform
     # Install WT32-SC01 (esp32) and WT32-SC01-Plus (esp32s3) toolchain
     if os.name == "nt":
@@ -29,7 +31,9 @@ def run_platform_install(idf_install_path: str, idf_targets: str) -> subprocess.
             cwd=idf_install_path,
         )
     else:
-        cp = subprocess.run(["./install.sh", idf_targets], check=True, cwd=idf_install_path)
+        cp = subprocess.run(
+            ["./install.sh", idf_targets], check=True, cwd=idf_install_path
+        )
     return cp
 
 
@@ -54,7 +58,8 @@ def check_git_ignore() -> None:
     gitignore_path = os.path.join(HERE, ".gitignore")
     if not os.path.exists(gitignore_path):
         print(
-            f"Warning: {gitignore_path} not found. " "This may cause issues with the installation."
+            f"Warning: {gitignore_path} not found. "
+            "This may cause issues with the installation."
         )
         return
     with open(gitignore_path, encoding="utf-8", mode="r") as f:
