@@ -30,7 +30,7 @@ class InstallAndUse(unittest.TestCase):
         if is_windows:
             rtn = os.system("idf_activate.bat && idf.py --help")
         else:
-            rtn = os.system("source idf_activate.sh && idf.py --help")
+            rtn = os.system("idf_activate.sh && idf.py --help")
         self.assertEqual(0, rtn)
         os.chdir(prev_cwd)
         safe_rmtree("app")
