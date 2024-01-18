@@ -48,7 +48,8 @@ def check_environment() -> tuple[bool, str]:
     # Check if .espressif is in the python path
     if ".espressif" in python_path:
         print(
-            "Error: You are using the espressif python environment."
+            "Error: You are using the espressif python environment.\n"
+            f"The path to python is: {python_path}\n"
             "Please deactivate it and try again."
         )
         # return 1
