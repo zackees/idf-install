@@ -53,7 +53,7 @@ def run_platform_install(idf_install_path: str, idf_targets: str) -> subprocess.
     export_sh = os.path.relpath(export_sh, os.getcwd())
     # Generate an export.sh file that simply calls into the export_sh file in the toolchain.
     with open("idf_activate.sh", encoding="utf-8", mode="w") as f:
-        f.write(f'source "{export_sh}"\n')
+        f.write(f'. "{export_sh}"\n')
         if os.name != "nt":
             os.chmod("idf_activate.sh", 0o755)
     if os.name == "nt":
