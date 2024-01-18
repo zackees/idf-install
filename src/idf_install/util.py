@@ -36,6 +36,8 @@ def onerror(func, path, exc_info):
 def safe_rmtree(path: str) -> None:
     """Delete a directory, but send it to the trash if it fails."""
     shutil.rmtree(path, ignore_errors=True)
+    if not os.path.exists(path):
+        return
     try:
         shutil.rmtree(path, onerror=onerror)
     except OSError:
@@ -44,3 +46,9 @@ def safe_rmtree(path: str) -> None:
             + " sending it to the trash instead."
         )
         send2trash(path)
+        if os.path.exists(path):
+            is_windows = os.name == "nt"
+            if is_windows:
+                os.system(f'rmdir /S /Q "{path}"')
+    if os.path.exists(path):
+        warn(f"Could not remove {path}")
