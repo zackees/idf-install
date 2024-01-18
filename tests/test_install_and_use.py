@@ -3,8 +3,8 @@ Unit test file.
 """
 
 import os
-import unittest
 import tempfile
+import unittest
 
 TEST_GITHUB = "https://github.com/zackees/xiao-inmp441-test"
 

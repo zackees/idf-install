@@ -22,16 +22,22 @@ COMMIT_MAP = {
 }
 
 
-def find_files(filename: str, search_path: str) -> list[str]:
+def find_files(
+    filename: str, search_path: str, break_on_first_match: bool
+) -> list[str]:
     result: list[str] = []
     # Wlaking top-down from the root
     for root, _, files in os.walk(search_path):
         if filename in files:
             result.append(os.path.join(root, filename))
+            if break_on_first_match:
+                break
     return result
 
 
-def run_platform_install(idf_install_path: str, idf_targets: str) -> subprocess.CompletedProcess:
+def run_platform_install(
+    idf_install_path: str, idf_targets: str
+) -> subprocess.CompletedProcess:
     # Run the install script for the platform
     # Install WT32-SC01 (esp32) and WT32-SC01-Plus (esp32s3) toolchain
     if os.name == "nt":
@@ -41,7 +47,7 @@ def run_platform_install(idf_install_path: str, idf_targets: str) -> subprocess.
             check=True,
             cwd=idf_install_path,
         )
-        files = find_files("export.bat", idf_install_path)
+        files = find_files("export.bat", idf_install_path, break_on_first_match=True)
         if len(files) == 0:
             warn(f"export.bat not found in {idf_install_path}")
             return cp
@@ -53,7 +59,9 @@ def run_platform_install(idf_install_path: str, idf_targets: str) -> subprocess.
             f.write(f'@call "{export_bat}"\n')
         print("\nNow run enter.bat whenever you want to use the idf.py toolchain.")
     else:
-        cp = subprocess.run(["./install.sh", idf_targets], check=True, cwd=idf_install_path)
+        cp = subprocess.run(
+            ["./install.sh", idf_targets], check=True, cwd=idf_install_path
+        )
     return cp
 
 
