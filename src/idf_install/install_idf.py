@@ -41,7 +41,7 @@ def check_git_ignore() -> None:
 
 
 def check_environment() -> tuple[bool, str]:
-    python_path = shutil.which("python")
+    python_path = shutil.which("python") or shutil.which("python3")
     if python_path is None:
         return False, "Python not found in PATH"
 
@@ -56,7 +56,7 @@ def check_environment() -> tuple[bool, str]:
             "Error: You are using the espressif python environment."
             "Please deactivate it and try again."
         )
-    return True, python_path
+    return True, ""
 
 
 def parse_arguments() -> argparse.Namespace:
