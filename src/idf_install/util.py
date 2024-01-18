@@ -22,6 +22,8 @@ def onerror(func, path, exc_info):
 
     Usage : ``shutil.rmtree(path, onerror=onerror)``
     """
+    if not os.path.exists(path):
+        return
 
     # Is the error an access error?
     if not os.access(path, os.W_OK):
