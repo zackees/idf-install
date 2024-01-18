@@ -1,11 +1,11 @@
 import argparse
 import os
 import shutil
-import subprocess
 import sys
 from warnings import warn
 
-from send2trash import send2trash
+from idf_install.install_idf_repo import install_idf_repo
+from idf_install.platform_install import run_platform_install
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 DEFAULT_INSTALL_DIR = os.path.join(os.getcwd(), "esp-idf")
@@ -13,7 +13,7 @@ DEFAULT_INSTALL_DIR = os.path.join(os.getcwd(), "esp-idf")
 # Set environment variables
 IDF_VER = "v5.2"  # Only used to version downloaded files.
 DEFAULT_IDF_TARGETS = "esp32,esp32s3,esp32c3"
-GIT_REPO = "https://github.com/espressif/esp-idf.git"
+
 
 COMMIT_MAP = {
     # Maps IDF_VER to the commit hash
@@ -22,76 +22,9 @@ COMMIT_MAP = {
 }
 
 
-def find_files(
-    filename: str, search_path: str, break_on_first_match: bool
-) -> list[str]:
-    result: list[str] = []
-    # Wlaking top-down from the root
-    for root, _, files in os.walk(search_path):
-        if filename in files:
-            result.append(os.path.join(root, filename))
-            if break_on_first_match:
-                break
-    return result
-
-
-def run_platform_install(
-    idf_install_path: str, idf_targets: str
-) -> subprocess.CompletedProcess:
-    # Run the install script for the platform
-    # Install WT32-SC01 (esp32) and WT32-SC01-Plus (esp32s3) toolchain
-    if os.name == "nt":
-        cp = subprocess.run(
-            f"cmd.exe /c install.bat {idf_targets}",
-            shell=True,
-            check=True,
-            cwd=idf_install_path,
-        )
-        files = find_files("export.bat", idf_install_path, break_on_first_match=True)
-        if len(files) == 0:
-            warn(f"export.bat not found in {idf_install_path}")
-            return cp
-        export_bat = files[0]
-        # make it relative
-        export_bat = os.path.relpath(export_bat, os.getcwd())
-        # Generate an export.bat file that simply calls into the export_bat file in the toolchain.
-        with open("enter.bat", encoding="utf-8", mode="w") as f:
-            f.write(f'@call "{export_bat}"\n')
-        print("\nNow run enter.bat whenever you want to use the idf.py toolchain.")
-    else:
-        cp = subprocess.run(
-            ["./install.sh", idf_targets], check=True, cwd=idf_install_path
-        )
-    return cp
-
-
 def touch_file(filepath: str) -> None:
     with open(filepath, mode="a"):  # pylint: disable=unspecified-encoding
         pass
-
-
-def git_ensure_installed(idf_install_path: str, commit: str | None) -> None:
-    # Use git to ensure repo is valid
-    if os.path.exists(idf_install_path):
-        shutil.rmtree(idf_install_path, ignore_errors=True)
-        try:
-            shutil.rmtree(idf_install_path)
-        except OSError:
-            warn(
-                f"Could not fully remove {idf_install_path} using shutil.rmtree,"
-                + " sending it to the trash instead."
-            )
-            send2trash(idf_install_path)
-
-    # Full install: clone the repository
-    print(f"Cloning the repository into directory {os.path.abspath(idf_install_path)}")
-    print("grab a coffee... this will take a while.")
-    git_clone_cmd = ["git", "clone", "--recursive", GIT_REPO, idf_install_path]
-    subprocess.run(git_clone_cmd, check=True)
-    # Checkout the specific commit
-    if commit is not None:
-        git_checkout_cmd = ["git", "checkout", commit]
-        subprocess.run(git_checkout_cmd, check=True, cwd=idf_install_path)
 
 
 def check_git_ignore() -> None:
@@ -175,7 +108,7 @@ def main() -> int:
         commit = COMMIT_MAP[IDF_VER]
         idf_install_path = os.path.join(args.install_dir, IDF_VER)
     print(f"install idf at: {idf_install_path}")
-    git_ensure_installed(idf_install_path, commit)
+    install_idf_repo(idf_install_path, commit)
     print(
         f"About to run install script in the current directory: {os.path.abspath(idf_install_path)}"
     )
