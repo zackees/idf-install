@@ -6,6 +6,7 @@ from warnings import warn
 
 from idf_install.install_idf_repo import install_idf_repo
 from idf_install.platform_install import run_platform_install
+from idf_install.util import touch_file
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 DEFAULT_INSTALL_DIR = os.path.join(os.getcwd(), "esp-idf")
@@ -22,11 +23,6 @@ COMMIT_MAP = {
     "v5.2": "b3f7e2c8a4d354df8ef8558ea7caddc07283a57b",
     "latest": None,
 }
-
-
-def touch_file(filepath: str) -> None:
-    with open(filepath, mode="a"):  # pylint: disable=unspecified-encoding
-        pass
 
 
 def check_git_ignore() -> None:

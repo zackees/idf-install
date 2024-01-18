@@ -1,25 +1,13 @@
 import os
-import shutil
 import subprocess
-from warnings import warn
-
-from send2trash import send2trash
 
 from idf_install.settings import GIT_REPO
+from idf_install.util import safe_rmtree
 
 
 def install_idf_repo(idf_install_path: str, commit: str | None) -> None:
     # Use git to ensure repo is valid
-    if os.path.exists(idf_install_path):
-        shutil.rmtree(idf_install_path, ignore_errors=True)
-        try:
-            shutil.rmtree(idf_install_path)
-        except OSError:
-            warn(
-                f"Could not fully remove {idf_install_path} using shutil.rmtree,"
-                + " sending it to the trash instead."
-            )
-            send2trash(idf_install_path)
+    safe_rmtree(idf_install_path)
 
     # Full install: clone the repository
     print(f"Cloning the repository into directory {os.path.abspath(idf_install_path)}")

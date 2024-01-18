@@ -6,6 +6,8 @@ import os
 import tempfile
 import unittest
 
+from idf_install.util import safe_rmtree
+
 TEST_GITHUB = "https://github.com/zackees/xiao-inmp441-test"
 
 
@@ -14,6 +16,7 @@ class InstallAndUse(unittest.TestCase):
 
     def test_install(self) -> None:
         """Test command line interface (CLI)."""
+        prev_cwd = os.getcwd()
         with tempfile.TemporaryDirectory() as tmpdir:
             os.chdir(tmpdir)
             rtn = os.system(f"git clone {TEST_GITHUB} app")
@@ -21,6 +24,8 @@ class InstallAndUse(unittest.TestCase):
             os.chdir("app")
             rtn = os.system("idf-install --non-interactive")
             self.assertEqual(0, rtn)
+            os.chdir(prev_cwd)
+            safe_rmtree(tmpdir)
 
 
 if __name__ == "__main__":
