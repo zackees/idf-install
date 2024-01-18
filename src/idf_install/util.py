@@ -11,7 +11,7 @@ def touch_file(filepath: str) -> None:
         pass
 
 
-def onerror(func, path, exc_info):
+def onerror(func, path, exc_info):  # pylint: disable=unused-argument
     """
     Error handler for ``shutil.rmtree``.
 
@@ -27,10 +27,13 @@ def onerror(func, path, exc_info):
 
     # Is the error an access error?
     if not os.access(path, os.W_OK):
-        os.chmod(path, stat.S_IWUSR)
-        func(path)
+        try:
+            os.chmod(path, stat.S_IWUSR)
+            func(path)
+        except PermissionError:
+            return
     else:
-        raise OSError(exc_info)
+        return
 
 
 def safe_rmtree(path: str) -> None:
@@ -38,17 +41,19 @@ def safe_rmtree(path: str) -> None:
     shutil.rmtree(path, ignore_errors=True)
     if not os.path.exists(path):
         return
-    try:
-        shutil.rmtree(path, onerror=onerror)
-    except OSError:
+
+    shutil.rmtree(path, onerror=onerror)
+    if not os.path.exists(path):
+        return
+    if os.path.exists(path):
+        is_windows = os.name == "nt"
+        if is_windows:
+            os.system(f'rmdir /S /Q "{path}"')
+    if os.path.exists(path):
         warn(
             f"Could not fully remove {path} using shutil.rmtree,"
             + " sending it to the trash instead."
         )
         send2trash(path)
-        if os.path.exists(path):
-            is_windows = os.name == "nt"
-            if is_windows:
-                os.system(f'rmdir /S /Q "{path}"')
     if os.path.exists(path):
         warn(f"Could not remove {path}")
