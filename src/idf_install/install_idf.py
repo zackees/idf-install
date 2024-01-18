@@ -37,7 +37,7 @@ def check_git_ignore() -> None:
     if "esp-idf" not in gitignore:
         print(f"adding esp-idf to {gitignore_path}")
         with open(gitignore_path, encoding="utf-8", mode="a") as f:
-            f.write("\nesp-idf\n")
+            f.write("\nesp-idf\n\nidf_activate.bat\nidf_activate.sh\n")
 
 
 def check_environment() -> tuple[bool, str]:

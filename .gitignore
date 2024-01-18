@@ -139,4 +139,5 @@ dmypy.json
 **/.DS_Store
 esp-idf/
 .aider*
-enter.bat
+idf_activate.bat
+idf_activate.sh
