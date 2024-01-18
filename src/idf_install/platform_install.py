@@ -3,9 +3,7 @@ import subprocess
 from warnings import warn
 
 
-def find_files(
-    filename: str, search_path: str, break_on_first_match: bool
-) -> list[str]:
+def find_files(filename: str, search_path: str, break_on_first_match: bool) -> list[str]:
     result: list[str] = []
     # Wlaking top-down from the root
     for root, _, files in os.walk(search_path):
@@ -16,9 +14,7 @@ def find_files(
     return result
 
 
-def run_platform_install(
-    idf_install_path: str, idf_targets: str
-) -> subprocess.CompletedProcess:
+def run_platform_install(idf_install_path: str, idf_targets: str) -> subprocess.CompletedProcess:
     # Run the install script for the platform
     # Install WT32-SC01 (esp32) and WT32-SC01-Plus (esp32s3) toolchain
     if os.name == "nt":
@@ -30,9 +26,7 @@ def run_platform_install(
         )
         # Generate an export.bat file that simply calls into the export_bat file in the toolchain.
     else:
-        cp = subprocess.run(
-            ["./install.sh", idf_targets], check=True, cwd=idf_install_path
-        )
+        cp = subprocess.run(["./install.sh", idf_targets], check=True, cwd=idf_install_path)
         files = find_files("export.sh", idf_install_path, break_on_first_match=True)
         if len(files) == 0:
             warn(f"export.sh not found in {idf_install_path}")
@@ -60,14 +54,14 @@ def run_platform_install(
     # Generate an export.sh file that simply calls into the export_sh file in the toolchain.
     with open("idf_activate.sh", encoding="utf-8", mode="w") as f:
         f.write(f'source "{export_sh}"\n')
+        if os.name != "nt":
+            os.chmod("idf_activate.sh", 0o755)
     if os.name == "nt":
         print(
             "\nNow run source idf_activate.bat whenever you want to use the idf.py"
             + " toolchain or use the idf.py toolchain in WSL/git-bash."
         )
     else:
-        print(
-            "\nNow run source idf_activate.sh whenever you want to use the idf.py toolchain."
-        )
+        print("\nNow run source idf_activate.sh whenever you want to use the idf.py toolchain.")
 
     return cp
