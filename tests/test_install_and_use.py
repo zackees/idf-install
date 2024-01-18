@@ -3,6 +3,7 @@ Unit test file.
 """
 
 import os
+import subprocess
 import tempfile
 import unittest
 
@@ -28,9 +29,11 @@ class InstallAndUse(unittest.TestCase):
         self.assertEqual(0, rtn)
         is_windows = os.name == "nt"
         if is_windows:
-            rtn = os.system("idf_activate.bat && idf.py --help")
+            rtn = subprocess.call("idf_activate.bat && idf.py --help", shell=True)
         else:
-            rtn = os.system(". ./idf_activate.sh && idf.py --help")
+            rtn = subprocess.call(
+                "/bin/bash -c 'source ./idf_activate.sh && idf.py --help'", shell=True
+            )
         self.assertEqual(0, rtn)
         os.chdir(prev_cwd)
         safe_rmtree("app")
