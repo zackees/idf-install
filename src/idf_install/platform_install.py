@@ -48,6 +48,11 @@ def run_platform_install(
     export_bat = os.path.relpath(export_bat, os.getcwd())
     with open("idf_activate.bat", encoding="utf-8", mode="w") as f:
         f.write(f'@call "{export_bat}"\n')
+    files = find_files("export.sh", idf_install_path, break_on_first_match=True)
+    if len(files) == 0:
+        warn(f"export.sh not found in {idf_install_path}")
+        return cp
+    export_sh = files[0]
     print("\nNow run idf_activate.bat whenever you want to use the idf.py toolchain.")
     export_sh = files[0]
     # make it relative
