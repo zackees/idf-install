@@ -14,6 +14,8 @@ DEFAULT_INSTALL_DIR = os.path.join(os.getcwd(), "esp-idf")
 IDF_VER = "v5.2"  # Only used to version downloaded files.
 DEFAULT_IDF_TARGETS = "esp32,esp32s3,esp32c3"
 
+sys.setrecursionlimit(200)  # Increase the limit, 2000 is just an example
+
 
 COMMIT_MAP = {
     # Maps IDF_VER to the commit hash
