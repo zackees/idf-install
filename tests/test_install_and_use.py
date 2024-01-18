@@ -20,9 +20,11 @@ class InstallAndUse(unittest.TestCase):
             os.chdir(tmpdir)
             rtn = os.system(f"git clone {TEST_GITHUB} app")
             self.assertEqual(0, rtn)
+            prev_cwd = os.getcwd()
             os.chdir("app")
             rtn = os.system("idf-install --non-interactive")
             self.assertEqual(0, rtn)
+            os.chdir(prev_cwd)
             safe_rmtree("app")
 
 
