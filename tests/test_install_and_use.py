@@ -17,16 +17,19 @@ class InstallAndUse(unittest.TestCase):
 
     def test_install(self) -> None:
         """Test command line interface (CLI)."""
-        with tempfile.TemporaryDirectory(ignore_cleanup_errors=IS_GITHUB) as tmpdir:
-            os.chdir(tmpdir)
-            rtn = os.system(f"git clone {TEST_GITHUB} app")
-            self.assertEqual(0, rtn)
-            prev_cwd = os.getcwd()
-            os.chdir("app")
-            rtn = os.system("idf-install --non-interactive")
-            self.assertEqual(0, rtn)
-            os.chdir(prev_cwd)
-            safe_rmtree("app")
+        original_cwd = os.getcwd()
+        tmpdir = tempfile.mkdtemp()
+        os.chdir(tmpdir)
+        rtn = os.system(f"git clone {TEST_GITHUB} app")
+        self.assertEqual(0, rtn)
+        prev_cwd = os.getcwd()
+        os.chdir("app")
+        rtn = os.system("idf-install --non-interactive")
+        self.assertEqual(0, rtn)
+        os.chdir(prev_cwd)
+        safe_rmtree("app")
+        os.chdir(original_cwd)
+        safe_rmtree(tmpdir)
 
 
 if __name__ == "__main__":
