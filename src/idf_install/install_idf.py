@@ -71,12 +71,6 @@ def parse_arguments() -> argparse.Namespace:
         type=str,
         default=DEFAULT_IDF_TARGETS,
     )
-    # --non-interactive
-    parser.add_argument(
-        "--non-interactive",
-        help="Do not ask for confirmation before removing the directory",
-        action="store_true",
-    )
     parser.add_argument(
         "--latest",
         help="Install the latest version of the IDF",

@@ -25,7 +25,7 @@ class InstallAndUse(unittest.TestCase):
         self.assertEqual(0, rtn)
         prev_cwd = os.getcwd()
         os.chdir("app")
-        rtn = os.system("idf-install --non-interactive")
+        rtn = os.system("idf-install")
         self.assertEqual(0, rtn)
         is_windows = os.name == "nt"
         if is_windows:
