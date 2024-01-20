@@ -28,7 +28,13 @@ jobs:
       run: idf-install
     - name: list directory
       run: dir
+    - name: test idf_activate
+      run: idf_activate
+      continue-on-error: true
+    - name: test idf_activate.bat
+      run: idf_activate.bat
+      continue-on-error: true
     - name: Build Project
-      run: idf_activate.bat && idf.py create-project myproject && cd myproject && idf.py build
+      run: idf_activate && idf.py create-project myproject && cd myproject && idf.py build
 
 
