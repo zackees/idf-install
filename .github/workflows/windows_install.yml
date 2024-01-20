@@ -1,4 +1,4 @@
-name: Install Test
+name: Ubuntu Install Test
 
 on: [push, pull_request]
 
@@ -8,7 +8,7 @@ jobs:
     strategy:
       matrix:
         python-version: [3.11.7]
-        os: [ubuntu-latest]
+        os: [windows-latest]
     steps:
     - uses: actions/checkout@v4
     - name: Set up Python ${{ matrix.python-version }}
@@ -27,5 +27,5 @@ jobs:
     - name: Run Installer
       run: idf-install --non-interactive
     - name: Build Project
-      run: . ./idf_activate.sh && idf.py create-project myproject && cd myproject && idf.py build
+      run: idf_activate.bat && idf.py create-project myproject && cd myproject && idf.py build
 
