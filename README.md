@@ -8,6 +8,8 @@ The missing installer for idf-installer for esp32 development. Run `idf-install`
 [![Ubuntu_Tests](../../actions/workflows/push_ubuntu.yml/badge.svg)](../../actions/workflows/push_ubuntu.yml)
 [![Win_Tests](../../actions/workflows/push_win.yml/badge.svg)](../../actions/workflows/push_win.yml)
 
+[![Install Test](https://github.com/zackees/idf-install/actions/workflows/install.yml/badge.svg)](https://github.com/zackees/idf-install/actions/workflows/install.yml)
+
 # Install idf-install toolset
 
 Install the installer tool
