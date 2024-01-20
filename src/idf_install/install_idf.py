@@ -88,8 +88,6 @@ def parse_arguments() -> argparse.Namespace:
 
 def main() -> int:
     args = parse_arguments()
-    if args.non_interactive:
-        warn("non-interactive mode is not implemented yet.")
     ok, err_msg = check_environment()
     if not ok:
         print(err_msg)
