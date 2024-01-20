@@ -2,7 +2,6 @@ import argparse
 import os
 import shutil
 import sys
-from warnings import warn
 
 from idf_install.install_idf_repo import install_idf_repo
 from idf_install.platform_install import run_platform_install
