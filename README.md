@@ -20,12 +20,42 @@ Then run the installer
 idf-install
 ```
 
-After that, run the export command to enter into the environment
-
+After that, run the `idf_activate` command to enter into the environment
 
 Windows:
 ```
-esp-idf\v5.2\export.bat
+idf_activate.bat
+```
+
+Linux/MacOS
+```
+. ./idf_activate.sh
+```
+
+Then after this you are going to initialize the project
+
+```
+idf.py create-project myproject
+```
+
+Now cd into the directory and build it
+
+```
+cd myproject
+idf.py build
+```
+
+Now you can flash the device
+
+```
+idf.py flash
+# or idf.py -p (PORT) flash
+```
+
+And now you can monitor the device with
+
+```
+idf.py -p (PORT) monitor
 ```
 
 # Develop
