@@ -27,6 +27,6 @@ jobs:
     - name: Run Installer
       run: idf-install --non-interactive
     - name: Build Project
-      run: . ./idf_activate.sh && idf.py create-project myproject && cd myproject && idf.py build
-      shell: bash
+      run: idf_activate.bat && idf.py create-project myproject && cd myproject && idf.py build
+
 
