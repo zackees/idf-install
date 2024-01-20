@@ -15,50 +15,50 @@ The missing installer for idf-installer for esp32 development. Run `idf-install`
 # Install idf-install toolset
 
 Install the installer tool
-```
+```bash
 pip install .
 ```
 
 Then run the installer
-```
+```bash
 idf-install
 ```
 
 After that, run the `idf_activate` command to enter into the environment
 
 Windows:
-```
+```bash
 idf_activate.bat
 ```
 
 Linux/MacOS
-```
+```bash
 . ./idf_activate.sh
 ```
 
 Then after this you are going to initialize the project
 
-```
+```bash
 idf.py create-project myproject
 ```
 
 Now cd into the directory and build it
 
-```
+```bash
 cd myproject
 idf.py build
 ```
 
 Now you can flash the device
 
-```
+```bash
 idf.py flash
 # or idf.py -p (PORT) flash
 ```
 
 And now you can monitor the device with
 
-```
+```bash
 idf.py -p (PORT) monitor
 ```
 
