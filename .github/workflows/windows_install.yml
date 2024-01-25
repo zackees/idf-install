@@ -28,6 +28,6 @@ jobs:
       run: idf-install
       continue-on-error: true
     - name: Build Project
-      run: .\idf_activate && idf.py create-project myproject && cd myproject && idf.py build
+      run: cmd /c "idf_activate && idf.py create-project myproject && cd myproject && idf.py build"
 
 
